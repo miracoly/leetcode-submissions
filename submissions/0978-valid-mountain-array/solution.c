@@ -1,5 +1,3 @@
-#pragma GCC optimize (-O3, -flto, -ffast-math, -march=native, -mtune=native)
-
 bool validMountainArray(const int* arr, int arrSize) {
     if (!arr || arrSize < 3) return false;
     if (arr[0] >= arr[1]) return false;
@@ -12,4 +10,3 @@ bool validMountainArray(const int* arr, int arrSize) {
 
     return is_falling;
 }
-
