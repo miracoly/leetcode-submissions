@@ -7,4 +7,3 @@ int removeDuplicates(int* nums, int numsSize) {
     }
     return k + 1;
 }
-
