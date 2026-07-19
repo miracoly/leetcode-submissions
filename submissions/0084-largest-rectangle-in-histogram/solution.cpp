@@ -2,38 +2,27 @@
 class Solution {
  public:
   int largestRectangleArea(vector<int>& heights) {
-    if (heights.empty()) return 0;
-
     const auto n = static_cast<int>(heights.size());
-    stack<int, vector<int>> history;
+    vector<int> buf;
+    buf.reserve(heights.size() + 1);
+    stack<int, vector<int>> pending_bars{std::move(buf)};
     int max_area{};
-    for (int i{}; i < n; ++i) {
-      const auto h_cur = heights[static_cast<size_t>(i)];
 
-      if (history.empty() ||
-          h_cur > heights[static_cast<size_t>(history.top())]) {
-        history.push(i);
-        continue;
-      }
+    const auto at = [&heights](int idx) {
+      return heights[static_cast<std::size_t>(idx)];
+    };
 
-      while (!history.empty() &&
-             heights[static_cast<size_t>(history.top())] >= h_cur) {
-        const int h = heights[static_cast<size_t>(history.top())];
-        history.pop();
-        const int left = history.empty() ? -1 : history.top();
+    for (int i{}; i <= n; ++i) {
+      const auto h_cur = i < n ? at(i) : 0;
+
+      while (!pending_bars.empty() && at(pending_bars.top()) >= h_cur) {
+        const int h = at(pending_bars.top());
+        pending_bars.pop();
+        const int left = pending_bars.empty() ? -1 : pending_bars.top();
         const int w = i - left - 1;
         max_area = std::max(max_area, w * h);
       }
-      history.push(i);
-    }
-
-    while (!history.empty() &&
-           heights[static_cast<size_t>(history.top())] >= 0) {
-      const int h = heights[static_cast<size_t>(history.top())];
-      history.pop();
-      const int left = history.empty() ? -1 : history.top();
-      const int w = n - left - 1;
-      max_area = std::max(max_area, w * h);
+      pending_bars.push(i);
     }
 
     return max_area;
